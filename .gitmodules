@@ -1,0 +1,3 @@
+[submodule "summarize"]
+	path = summarize
+	url = https://github.com/evanshauser/summarize.git
