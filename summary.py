@@ -84,7 +84,7 @@ def add_and_commit(file_list):
                 print git_add_cmd
                 proc = subprocess.call(git_add_cmd, shell=True)
 
-                git_commit_cmd = git_commit + "\"" + summary.replace('"', r'\"') + "\n\n" + description.replace('"', r'\"') + "\""
+                git_commit_cmd = git_commit + "\"" + os.path.basename(fname)os.path.basename( + ":" + summary.replace('"', r'\"') + "\n\n" + description.replace('"', r'\"') + "\""
                 print git_commit_cmd
                 proc = subprocess.call(git_commit_cmd, shell=True)
 
