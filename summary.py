@@ -81,11 +81,11 @@ def add_and_commit(file_list):
             (summary, description) = generate_summary(fname)
             try:
                 git_add_cmd = git_add + fname
-                print git_add_cmd
+                #print git_add_cmd
                 proc = subprocess.call(git_add_cmd, shell=True)
 
-                git_commit_cmd = git_commit + "\"" + os.path.basename(fname)os.path.basename( + ":" + summary.replace('"', r'\"') + "\n\n" + description.replace('"', r'\"') + "\""
-                print git_commit_cmd
+                git_commit_cmd = git_commit + "\"" + os.path.basename(fname) + ": " + summary.replace('"', r'\"') + "\n\n" + description.replace('"', r'\"') + "\""
+                #print git_commit_cmd
                 proc = subprocess.call(git_commit_cmd, shell=True)
 
             except subprocess.CalledProcessError as e:
