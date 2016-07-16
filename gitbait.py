@@ -35,21 +35,6 @@ def scrape_extension(extension):
 
 
 extensions = [  'index',
-
-                'podcasts',
-                'poitics',
-                'puzzles',
-                'reader',
-                'rewind',
-                'science',
-                'sports',
-                'style',
-                'tech',
-                'travel',
-                'weddings',
-                'weekends',
-                'world',
-
                 'lol',
                 'win',
                 'omg',
