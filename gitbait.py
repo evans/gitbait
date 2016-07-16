@@ -9,9 +9,9 @@ soup = BeautifulSoup(page, 'html.parser')
 #print(soup.prettify())
 full = json.loads(page)
 titles = []
-print type(full['big_stories'])
-print type(full['big_stories'][0])
-print full.keys()
+#print type(full['big_stories'])
+#print type(full['big_stories'][0])
+#print full.keys()
 for article in full['big_stories']:
     title = article['title']
     if not (title in titles):
@@ -21,7 +21,6 @@ for article in full['buzzes']:
     if not (title in titles):
         titles.append(title)
 title_iter = iter(titles)
-
 
 """
 Untracked files
@@ -38,26 +37,26 @@ proc = subprocess.Popen(["git diff --name-only"], stdout=subprocess.PIPE, shell=
 #print "modified:", modified
 
 
-git_add = "git add "
-git_commit = "git commit -m "
-for fname in untracked.split('\n'):
-    if fname:
-        git_add_cmd = git_add + fname
-        print git_add_cmd
-        try:
-            message = next(title_iter)
-            if message:
-                git_commit_cmd = git_commit + "\"" + message + "\""
-                print git_commit_cmd
-        except StopIteration as e:
-            git_commit_cmd = git_commit + "\"lol jk get rekt\""
-            print git_commit_cmd
+def add_and_commit(file_list):
+    git_add = "git add "
+    git_commit = "git commit -m "
+    for fname in file_list.split('\n'):
+        if fname:
+            try:
+                git_add_cmd = git_add + fname
+                proc = subprocess.call(git_add_cmd, shell=True)
+                print git_add_cmd
+                try:
+                    message = next(title_iter)
+                    if message:
+                        git_commit_cmd = git_commit + "\"" + message + "\""
+                        proc = subprocess.call(git_commit_cmd, shell=True)
+                        print git_commit_cmd
+                except StopIteration as e:
+                    git_commit_cmd = git_commit + "\"lol jk get rekt\""
+                    print git_commit_cmd
+            except CalledProcessError as e:
+                print e
 
-
-
-for fname in modified.split('\n'):
-    if fname:
-        git_cmd = git_add + fname
-        print git_cmd
-
-
+add_and_commit(untracked)
+add_and_commit(modified)
