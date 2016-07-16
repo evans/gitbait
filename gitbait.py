@@ -10,7 +10,14 @@ full = json.loads(page)
 print type(full['big_stories'])
 print type(full['big_stories'][0])
 print full.keys()
+"""
 for article in full['big_stories']:
     print article['title']
 for article in full['buzzes']:
     print article['title']
+"""
+
+git ls-files --others --exclude-standard
+git diff --name-only
+
+
