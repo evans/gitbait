@@ -3,23 +3,31 @@ import urllib2
 import json
 import subprocess
 
-page = urllib2.urlopen('http://www.buzzfeed.com/api/v2/feeds/index').read()
-soup = BeautifulSoup(page, 'html.parser')
+def scrape_json(title_list, full_json):
+    for article in full_json['big_stories']:
+        title = article['title']
+        if not (title in titles):
+            titles.append(title)
+    for article in full_json['buzzes']:
+        title = article['title']
+        if not (title in titles):
+            titles.append(title)
 
-#print(soup.prettify())
-full = json.loads(page)
-titles = []
-#print type(full['big_stories'])
-#print type(full['big_stories'][0])
-#print full.keys()
-for article in full['big_stories']:
-    title = article['title']
-    if not (title in titles):
-        titles.append(title)
-for article in full['buzzes']:
-    title = article['title']
-    if not (title in titles):
-        titles.append(title)
+base_url = 'http://www.buzzfeed.com/api/v2/feeds/'
+extensions = ['index', 'news', 'lol', 'videos']
+
+for extension in extensions:
+    page = urllib2.urlopen(base_url + extension).read()
+    #soup = BeautifulSoup(page, 'html.parser')
+
+    #print(soup.prettify())
+    full = json.loads(page)
+    titles = []
+    scrape_json(titles, full)
+    #print type(full['big_stories'])
+    #print type(full['big_stories'][0])
+    #print full.keys()
+
 title_iter = iter(titles)
 
 """
