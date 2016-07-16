@@ -3,32 +3,65 @@ import urllib2
 import json
 import subprocess
 
-def scrape_json(title_list, full_json):
-    for article in full_json['big_stories']:
-        title = article['title']
-        if not (title in titles):
-            titles.append(title)
-    for article in full_json['buzzes']:
-        title = article['title']
-        if not (title in titles):
-            titles.append(title)
+unique_titles = []
 
-base_url = 'http://www.buzzfeed.com/api/v2/feeds/'
-extensions = ['index', 'news', 'lol', 'videos', 'win', 'omg', 'fail', 'wtf']
+top_keys = ['big_stories', 'buzzes']
 
-titles = []
-for extension in extensions:
+def scrape_json(full_json):
+    titles = []
+    for key in top_keys:
+        for article in full_json[key]:
+            title = article['title']
+            if not (title in unique_titles):
+                unique_titles.append(title)
+                titles.append(title)
+    return titles
+
+def scrape_extension(extension):
+    print extension
+    title = []
+    base_url = 'http://www.buzzfeed.com/api/v2/feeds/'
     page = urllib2.urlopen(base_url + extension).read()
     #soup = BeautifulSoup(page, 'html.parser')
 
     #print(soup.prettify())
     full = json.loads(page)
-    scrape_json(titles, full)
+
+    return iter(scrape_json(full))
+
     #print type(full['big_stories'])
     #print type(full['big_stories'][0])
     #print full.keys()
 
-title_iter = iter(titles)
+
+extensions = [  'index',
+                'lol',
+                'win',
+                'omg',
+                'fail',
+                'geeky',
+                'life',
+                'news',
+                'videos',
+                'music',
+                'buzz',
+                'parents',
+                'audio',
+                'celebrity',
+                'entertainment',
+                'lgbt',
+                'books',
+                'business',
+                'quizzes',
+                'animals',
+                'diy',
+                'food',
+                'wtf']
+
+
+extension_iter = iter(extensions)
+title_iter = scrape_extension(next(extension_iter))
+#print tuple(title_iter)
 
 """
 Untracked files
@@ -45,26 +78,33 @@ proc = subprocess.Popen(["git diff --name-only"], stdout=subprocess.PIPE, shell=
 #print "modified:", modified
 
 
-def add_and_commit(file_list):
+def add_and_commit(titles, file_list):
     git_add = "git add "
     git_commit = "git commit -m "
     for fname in file_list.split('\n'):
         if fname:
             try:
                 git_add_cmd = git_add + fname
+                #print git_add_cmd
                 proc = subprocess.call(git_add_cmd, shell=True)
-                print git_add_cmd
+                message = ""
                 try:
-                    message = next(title_iter)
-                    if message:
-                        git_commit_cmd = git_commit + "\"" + message + "\""
-                        proc = subprocess.call(git_commit_cmd, shell=True)
-                        print git_commit_cmd
+                    message = next(titles)
                 except StopIteration as e:
-                    git_commit_cmd = git_commit + "\"lol jk get rekt\""
-                    print git_commit_cmd
-            except CalledProcessError as e:
+                    while not message:
+                        try:
+                            titles = scrape_extension(next(extension_iter))
+                            message = next(titles)
+                        except StopIteration as e:
+                            message = "lol jk get rekt"
+
+                if message:
+                    git_commit_cmd = git_commit + "\"" + message.replace('"', r'\"') + "\""
+                    #print git_commit_cmd
+                    proc = subprocess.call(git_commit_cmd, shell=True)
+
+            except subprocess.CalledProcessError as e:
                 print e
 
-add_and_commit(untracked)
-add_and_commit(modified)
+add_and_commit(title_iter, untracked)
+add_and_commit(title_iter, modified)
