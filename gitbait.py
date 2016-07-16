@@ -14,15 +14,15 @@ def scrape_json(title_list, full_json):
             titles.append(title)
 
 base_url = 'http://www.buzzfeed.com/api/v2/feeds/'
-extensions = ['index', 'news', 'lol', 'videos']
+extensions = ['index', 'news', 'lol', 'videos', 'win', 'omg', 'fail', 'wtf']
 
+titles = []
 for extension in extensions:
     page = urllib2.urlopen(base_url + extension).read()
     #soup = BeautifulSoup(page, 'html.parser')
 
     #print(soup.prettify())
     full = json.loads(page)
-    titles = []
     scrape_json(titles, full)
     #print type(full['big_stories'])
     #print type(full['big_stories'][0])
